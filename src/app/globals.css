@@ -13,6 +13,9 @@
     --foreground: #ededed;
   }
 } */
+*{
+  scroll-behavior: smooth;
+}
 
 body {
   color: var(--foreground);

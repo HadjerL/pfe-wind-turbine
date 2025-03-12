@@ -1,7 +1,15 @@
-export default function Home() {
+import HeroSecton from "@/app/ui/home/hero-section";
+import EducationSection from "./ui/home/eduction-section";
+import CTASection from "./ui/home/cta-section";
+import Showcase from "./ui/home/showcase-section";
+
+export default function page() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      
+    <div className="">
+      <HeroSecton/>
+      <EducationSection/>
+      <Showcase/>
+      <CTASection/>
     </div>
   );
 }

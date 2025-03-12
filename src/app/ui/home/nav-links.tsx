@@ -4,14 +4,18 @@ import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
 const links = [
-    { name: 'Home', href: '/'},
-    { name: 'Dashboard', href: '/dashboard'},
+    { name: 'Home', href: '/' },
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'How It Works', href: '#education' }, 
+    { name: 'Insights', href: '#showcase' },
+    { name: 'Get Started', href: '#cta' },
 ];
+
 export default function NavLinks(){
     const pathname = usePathname();
 
     return(
-        <ul className="flex flex-row gap-8">
+        <ul className="flex flex-row gap-8 text-sm">
             {
                 links.map((link) => {
                     return(
