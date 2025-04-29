@@ -1,35 +1,24 @@
 'use client'
-import { useDataStore } from "@/app/lib/dataStore";
-import { useEffect, useState } from "react";
-import { Inter } from 'next/font/google'
-import { IoTimeSharp } from "react-icons/io5";
 
-const inter = Inter({ subsets: ['latin'] })
+interface StisticalCardProps {
+    title: string;
+    stat: string | number | undefined;
+    unit?: string;
+    Icon: React.ElementType;
+}
 
-export default function StisticalCard(){
-    const data = useDataStore((state) => state.data);
-    const [duration, setDuration] = useState<number | undefined>(undefined);
-    useEffect(()=>{
-        if (!data || data.length === 0) return;
-        console.log(data);
-
-        const parseTimestamp = (timestamp: string) => new Date(timestamp).getTime();
-        const difference = parseTimestamp(data[data.length - 1]?.Timestamp) - parseTimestamp(data[0]?.Timestamp);
-        const durationSeconds = difference / 1000;
-        const durationMinutes = durationSeconds / 60;
-        const durationHours = durationMinutes / 60;
-        setDuration(Math.floor(durationHours))
-    },[data])
-
-    return(
-        <div className={`flex flex-row gap-4 justify-evenly border items-start shadow-md rounded p-8 ${inter.className}`}>
-            <div className="flex flex-col gap-1">
-                <p className="text-sm text-slate-500">Duration</p>
-                <p><span className="text-5xl font-semibold">{duration}</span> Hours</p>
+export default function StisticalCard({ title, stat, unit, Icon }: StisticalCardProps) {
+    return (
+        <div className="flex items-center justify-between bg-white border rounded-lg shadow-md p-6 w-full">
+            <div className="flex flex-col">
+                <p className="text-sm text-gray-500">{title}</p>
+                <p className="text-3xl font-bold text-gray-800">
+                    {stat ?? 'N/A'} <span className="text-lg text-gray-500">{unit}</span>
+                </p>
             </div>
-            <div className="bg-primary rounded-full p-4">
-                <IoTimeSharp className="text-3xl text-white"/>
+            <div className="flex items-center justify-center w-14 h-14 bg-primary rounded-full shadow-md">
+                <Icon className="text-white text-4xl " />
             </div>
         </div>
-    )
+    );
 }

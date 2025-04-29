@@ -1,35 +1,37 @@
-import VarCard from "@/app/ui/dashboard/var-card"
-import Uploader from "@/app/ui/dashboard/uploader"
-import AnomaliesCard from "@/app/ui/dashboard/anomalies-card"
-import AnomalyPercentageCard from "@/app/ui/dashboard/anomaly-percentage"
-import AnomalyNormalPercentageCard from "@/app/ui/dashboard/normal-anomaly-percentage"
-import StisticalCard from "@/app/ui/dashboard/statistical-card"
-import DateCard from "./date-card"
+'use client'
+import { useDataStore } from "@/app/lib/dataStore";
+import VarCard from "@/app/ui/dashboard/var-card";
+import Uploader from "@/app/ui/dashboard/uploader";
+import AnomaliesCard from "@/app/ui/dashboard/anomalies-card";
+import AnomalyPercentageCard from "@/app/ui/dashboard/anomaly-percentage";
+import AnomalyNormalPercentageCard from "@/app/ui/dashboard/normal-anomaly-percentage";
+import DateCard from "./date-card";
+import StatisticalCardsGrid from "./statistical-cards-grid";
 
-
-export default function CardsGrids(){
-
-    return(
+export default function CardsGrids() {
+    const data = useDataStore((state) => state.data);
+    const classification = useDataStore((state) => state.classifications);
+    return (
         <>
-            <div className="flex flex-col gap-5 p-8">
+            <div className="flex flex-col gap-5 p-4 md:p-8 ">
                 <div>
-                    <Uploader/>
+                    <Uploader />
                 </div>
-                <DateCard/>
-                <div className="grid grid-cols-3 gap-10">
-                    <StisticalCard/>
-                    <StisticalCard/>
-                    <StisticalCard/>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <AnomalyNormalPercentageCard/>
-                        <AnomalyPercentageCard/>
-                    </div>
-                    <AnomaliesCard/>
-                    <VarCard/>
-                </div>
+                {(data.length>0 || classification.length>0) && (
+                    <>
+                        <DateCard />
+                        <StatisticalCardsGrid />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <AnomalyNormalPercentageCard />
+                                <AnomalyPercentageCard />
+                            </div>
+                            <AnomaliesCard />
+                            <VarCard />
+                        </div>
+                    </>
+                )}
             </div>
         </>
-    )
+    );
 }

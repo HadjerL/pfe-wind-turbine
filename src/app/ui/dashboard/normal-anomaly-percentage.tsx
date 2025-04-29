@@ -37,7 +37,19 @@ export default function AnomalyNormalPercentageCard() {
     }, [classifications]);
 
     if (!classifications || classifications.length === 0) {
-        return <p className="p-4 text-red-500">No classification data available. Please upload a CSV file first.</p>;
+        return (
+            <div className="shadow-md rounded-lg">
+                <div className="bg-slate-100 p-4 flex flex-row justify-between">
+                    <h1 className="text-sm font-bold text-center">Normal vs Anomaly Percentage</h1>
+                </div>
+                <div className="flex items-center justify-center">
+                    <div className="animate-pulse w-60 h-60 bg-gray-300 rounded-full"></div>
+                </div>
+                <div className="p-4 space-y-4">
+                    <p className="text-center text-lg font-semibold text-gray-400">Processing data...</p>
+                </div>
+            </div>
+        )
     }
 
     const chartData = {

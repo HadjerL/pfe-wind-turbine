@@ -49,7 +49,19 @@ export default function ScatterPlot() {
     }, [data, classification]);
 
     if (!classification || classification.length === 0) {
-        return <p className="p-4 text-red-500">No classification data available. Please upload a CSV file first.</p>;
+        return (
+            <div className="shadow-md rounded-lg">
+                <div className="bg-slate-100 py-4 px-10 flex flex-row justify-between items-center">
+                    <h1 className="text-sm font-bold">Turbine State Over Time</h1>
+                </div>
+                <div className="flex items-center justify-center">
+                    <div className="animate-pulse w-[35rem] h-60 bg-gray-300 rounded"></div>
+                </div>
+                <div className="p-4 space-y-4">
+                    <p className="text-center text-lg font-semibold text-gray-400">Processing data...</p>
+                </div>
+            </div>
+        )
     }
 
     const labels = data.map((point) => point.Timestamp);

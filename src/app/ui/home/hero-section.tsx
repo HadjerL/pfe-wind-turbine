@@ -9,7 +9,7 @@ const montserrat = Montserrat({
 
 export default function HeroSecton(){
     return(
-        <section className="grid grid-cols-2 p-24">
+        <section className="grid grid-cols-1 md:grid-cols-2 p-4 md:p-24">
             <div className="flex flex-col gap-5 items-start justify-center p-8">
                 <h1 className={`text-primary text-4xl font-bold leading-tight ${montserrat.className}`}>
                     AI-Powered Predictive Maintenance for Wind Turbines
@@ -29,7 +29,7 @@ export default function HeroSecton(){
             width={700}
             height={800}
             alt="hero"
-            className=" rounded-t-full place-self-center rounded-bl-full"
+            className=" rounded-t-full place-self-center md:rounded-bl-full"
             />
         </section>
     )

@@ -46,7 +46,10 @@ export default function CSVUploader(){
             {classifications && classifications.length > 0 && (
                 <button
                     onClick={downloadCSV}
-                    className="flex flex-row items-center rounded bg-primary text-white px-10 border hover:bg-slate-200 hover:text-text"
+                    className="
+                    flex flex-row items-center rounded bg-primary text-white 
+                    px-10 border hover:bg-slate-200 hover:text-text py-2 justify-center
+                    "
                 >
                     <MdSaveAlt className="text-lg"/>.csv
                 </button>
