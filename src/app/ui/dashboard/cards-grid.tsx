@@ -8,6 +8,7 @@ import AnomalyNormalPercentageCard from "@/app/ui/dashboard/normal-anomaly-perce
 import DateCard from "./date-card";
 import StatisticalCardsGrid from "./statistical-cards-grid";
 import ForecastsCard from "./forecasting/forecasts card";
+import ExplainationsCard from "./explainations-card";
 
 export default function CardsGrids() {
     const data = useDataStore((state) => state.data);
@@ -15,6 +16,7 @@ export default function CardsGrids() {
     return (
         <>
             <div className="flex flex-col gap-5 p-4 md:p-8 ">
+                <ExplainationsCard />
                 <div>
                     <Uploader />
                 </div>

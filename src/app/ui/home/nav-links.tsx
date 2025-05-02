@@ -5,9 +5,9 @@ import clsx from 'clsx';
 
 const links = [
     { name: 'Home', href: '/' },
-    { name: 'How It Works', href: '#education' }, 
-    { name: 'Insights', href: '#showcase' },
-    { name: 'Get Started', href: '#cta' },
+    { name: 'How It Works', href: '/#education' }, 
+    { name: 'Insights', href: '/#showcase' },
+    { name: 'Get Started', href: '/#cta' },
     { name: 'Dashboard', href: '/dashboard' },
 ];
 

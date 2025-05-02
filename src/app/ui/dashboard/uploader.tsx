@@ -72,12 +72,17 @@ export default function Uploader() {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             
             const response = await fetch("http://192.168.1.33:5000/predict", {
+            // const response = await fetch("http://127.0.0.1:5000/predict", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
 
-            if (!response.ok) throw new Error("Failed to fetch classifications");
+            if (!response.ok){ 
+                const errorText = await response.text();
+                console.log("🚀 ~ fetchClassifications ~ errorText:", errorText)
+                throw new Error("Failed to fetch classifications")
+            };
 
             const classificationResult: Classification[] = await response.json();
             setClassifications(classificationResult);
@@ -96,12 +101,17 @@ export default function Uploader() {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             
             const res = await fetch("http://192.168.1.33:5000/predict_forecast", {
+            // const res = await fetch("http://127.0.0.1:5000/predict_forecast", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data.slice(-MINIMUM_ROWS)), // Send only the most recent 576 rows
             });
 
-            if (!res.ok) throw new Error("Failed to fetch forecast data");
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.log("🚀 ~ fetchForecast ~ errorText:", errorText)
+                throw new Error("Failed to fetch forecast data")
+            };
             const forecast: Forecast[] = await res.json();
             setForecast(forecast);
         } catch (err) {
