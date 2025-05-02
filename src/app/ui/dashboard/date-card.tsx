@@ -10,7 +10,6 @@ export default function DateCard() {
 
     useEffect(() => {
         if (!data || data.length === 0) return;
-        console.log(data);
         setMinTime(data[0]?.Timestamp);
         setMaxTime(data[data.length - 1]?.Timestamp);
     }, [data]);

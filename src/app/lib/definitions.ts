@@ -29,3 +29,8 @@ export type DataPoint = {
 export type Classification = {
     Predicted_Classes: string[];
 }
+
+export type Forecast = {
+    timestamp: string;
+    power_output: number;
+}

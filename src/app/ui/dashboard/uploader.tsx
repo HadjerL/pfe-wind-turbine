@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Papa from 'papaparse'
 import { useDataStore } from "@/app/lib/dataStore";
-import { DataPoint, Classification } from "@/app/lib/definitions";
+import { DataPoint, Classification, Forecast } from "@/app/lib/definitions";
 import CSVUploader from "./csv-uploader";
 
 const REQUIRED_COLUMNS = [
@@ -28,13 +28,14 @@ const REQUIRED_COLUMNS = [
     'Wind_Direction_Cos'
 ];
 
+const MINIMUM_ROWS = 576 / 2; // Minimum required rows of data
+
 export default function Uploader() {
-    const data = useDataStore((state) => state.data);
-    console.log("🚀 ~ Uploader ~ data:", data)
-    const classification = useDataStore((state) => state.classifications);
-    console.log("🚀 ~ Uploader ~ classification:", classification)
+    const forecast = useDataStore((state) => state.forecast);
+    console.log("🚀 ~ forecast:", forecast)
     const setDataPoints = useDataStore((state) => state.setData);
     const setClassifications = useDataStore((state) => state.setClassifications);
+    const setForecast = useDataStore((state) => state.setForecast);
     
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -46,11 +47,23 @@ export default function Uploader() {
         
         if (missingColumns.length > 0) {
             setError(`Missing required columns: ${missingColumns.join(', ')}`);
-            setDataPoints([])
-            setClassifications([])
+            setDataPoints([]);
+            setClassifications([]);
+            setForecast([]);
             return false;
         }
         
+        return true;
+    };
+
+    const validateRowCount = (data: DataPoint[]): boolean => {
+        if (data.length < MINIMUM_ROWS) {
+            setError(`File must contain at least ${MINIMUM_ROWS} rows of data. Found only ${data.length} rows.`);
+            setDataPoints([]);
+            setClassifications([]);
+            setForecast([]);
+            return false;
+        }
         return true;
     };
 
@@ -59,8 +72,7 @@ export default function Uploader() {
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             
-            const response = await fetch("http://192.168.228.118:5000/predict", {
-                // const response = await fetch("http://127.0.0.1:5000/predict", {
+            const response = await fetch("http://192.168.1.33:5000/predict", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
@@ -70,8 +82,32 @@ export default function Uploader() {
 
             const classificationResult: Classification[] = await response.json();
             setClassifications(classificationResult);
+                
         } catch (err) {
             setError("Error fetching classification data: " + (err instanceof Error ? err.message : "Unknown error"));
+            setClassifications([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchForecast = async (data: DataPoint[]) => {
+        setIsLoading(true);
+        try {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            
+            const res = await fetch("http://192.168.1.33:5000/predict_forecast", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data.slice(-MINIMUM_ROWS)), // Send only the most recent 576 rows
+            });
+
+            if (!res.ok) throw new Error("Failed to fetch forecast data");
+            const forecast: Forecast[] = await res.json();
+            setForecast(forecast);
+        } catch (err) {
+            setError("Error fetching forecast data: " + (err instanceof Error ? err.message : "Unknown error"));
+            setForecast([]);
         } finally {
             setIsLoading(false);
         }
@@ -98,8 +134,15 @@ export default function Uploader() {
                 }
 
                 const data: DataPoint[] = result.data as DataPoint[];
+                
+                // Validate row count before proceeding
+                if (!validateRowCount(data)) {
+                    return;
+                }
+
                 setDataPoints(data);
                 fetchClassifications(data);
+                fetchForecast(data);
             },
             error: (err) => setError(`Parsing error: ${err.message}`),
         });

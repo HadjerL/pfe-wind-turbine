@@ -10,6 +10,7 @@ import { GrStatusUnknown } from "react-icons/gr";
 export default function StatisticalCardsGrid() {
     const data = useDataStore((state) => state.data);
     const [duration, setDuration] = useState<number | undefined>(undefined);
+    const [durationUnit, setDurationUnit] = useState<string | undefined>(undefined);
     const [avgPower, setAvgPower] = useState<number | undefined>(undefined);
     const [avgWindSpeed, setAvgWindSpeed] = useState<number | undefined>(undefined);
     const [mostCommonStatus, setMostCommonStatus] = useState<string | undefined>(undefined);
@@ -22,7 +23,17 @@ export default function StatisticalCardsGrid() {
 
         // Calculate duration in hours
         const difference = parseTimestamp(data[data.length - 1]?.Timestamp) - parseTimestamp(data[0]?.Timestamp);
-        setDuration(Math.floor((difference / 1000) / 3600)); // Convert to hours
+        const durationInHours = Math.floor((difference / 1000) / 3600); // Convert to hours
+        if (durationInHours > 24 * 30) {
+            setDuration(Math.floor(durationInHours / (24 * 30)));
+            setDurationUnit("months");
+        } else if (durationInHours > 24) {
+            setDuration(Math.floor(durationInHours / 24));
+            setDurationUnit("days");
+        } else {
+            setDuration(durationInHours);
+            setDurationUnit("hours");
+        }
 
         // Calculate average power output
         const powerOutputs = data.map(item => item.Power_Output).filter(val => val !== undefined);
@@ -39,7 +50,7 @@ export default function StatisticalCardsGrid() {
         // Calculate most common status type (mode)
         const statusCounts: Record<string, number> = {};
         data.forEach(item => {
-            if (item.Status_Type) {
+            if ((item.Status_Type).toString()) {
                 statusCounts[item.Status_Type] = (statusCounts[item.Status_Type] || 0) + 1;
             }
         });
@@ -55,7 +66,7 @@ export default function StatisticalCardsGrid() {
                     <StisticalCard 
                         stat={duration} 
                         title="Duration" 
-                        unit="hours" 
+                        unit={durationUnit}
                         Icon={IoTimeSharp}  
                     />
                     <StisticalCard 
