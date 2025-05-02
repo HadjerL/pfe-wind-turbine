@@ -7,6 +7,7 @@ import AnomalyPercentageCard from "@/app/ui/dashboard/anomaly-percentage";
 import AnomalyNormalPercentageCard from "@/app/ui/dashboard/normal-anomaly-percentage";
 import DateCard from "./date-card";
 import StatisticalCardsGrid from "./statistical-cards-grid";
+import ForecastsCard from "./forecasting/forecasts card";
 
 export default function CardsGrids() {
     const data = useDataStore((state) => state.data);
@@ -28,6 +29,7 @@ export default function CardsGrids() {
                             </div>
                             <AnomaliesCard />
                             <VarCard />
+                            <ForecastsCard />
                         </div>
                     </>
                 )}

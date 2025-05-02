@@ -31,8 +31,7 @@ const REQUIRED_COLUMNS = [
 const MINIMUM_ROWS = 576 / 2; // Minimum required rows of data
 
 export default function Uploader() {
-    const forecast = useDataStore((state) => state.forecast);
-    console.log("🚀 ~ forecast:", forecast)
+    // const forecast = useDataStore((state) => state.forecast);
     const setDataPoints = useDataStore((state) => state.setData);
     const setClassifications = useDataStore((state) => state.setClassifications);
     const setForecast = useDataStore((state) => state.setForecast);
