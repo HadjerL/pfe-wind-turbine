@@ -93,7 +93,7 @@ export default function RealTimeSystem() {
             const forecast: Forecast[] = await res.json();
             setForecast(forecast);
             
-            console.log("🚀 ~ fetchForecast ~ forecast:", forecast)
+            // console.log("🚀 ~ fetchForecast ~ forecast:", forecast)
             setError(null)
         } catch (err) {
             // setError("Error fetching forecast data: " + (err instanceof Error ? err.message : "Unknown error"));

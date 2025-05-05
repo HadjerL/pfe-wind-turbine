@@ -69,7 +69,7 @@ export default function Uploader() {
     const fetchClassifications = async (data: DataPoint[]) => {
         setIsLoading(true);
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // await new Promise((resolve) => setTimeout(resolve, 1000));
             
             const response = await fetch("http://192.168.1.33:5000/predict", {
             // const response = await fetch("http://127.0.0.1:5000/predict", {
@@ -98,7 +98,7 @@ export default function Uploader() {
     const fetchForecast = async (data: DataPoint[]) => {
         setIsLoading(true);
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // await new Promise((resolve) => setTimeout(resolve, 1000));
             
             const res = await fetch("http://192.168.1.33:5000/predict_forecast", {
             // const res = await fetch("http://127.0.0.1:5000/predict_forecast", {
