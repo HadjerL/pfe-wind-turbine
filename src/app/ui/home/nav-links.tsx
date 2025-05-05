@@ -8,7 +8,7 @@ const links = [
     { name: 'How It Works', href: '/#education' }, 
     { name: 'Insights', href: '/#showcase' },
     { name: 'Get Started', href: '/#cta' },
-    { name: 'Dashboard', href: '/dashboard' },
+    // { name: 'Dashboard', href: '/dashboard' },
 ];
 
 export default function NavLinks(){
@@ -37,7 +37,7 @@ export default function NavLinks(){
                     )
                 })
             }
-            <Link href='/login' className="cursor-pointer bg-primary text-white px-6 py-2 rounded-md font-semibold">Login</Link>
+            <Link href='/dashboard' className="cursor-pointer bg-primary text-white px-6 py-2 rounded-md font-semibold">Dashboard</Link>
         </ul>
     )
 }

@@ -40,7 +40,7 @@ export default function NavBar() {
             <nav className="hidden md:flex flex-row items-end justify-between py-4 px-20 shadow-sm shadow-black/20">
                 <Link href={"/"}>
                     <Image
-                        src={'windpmslogo.svg'}
+                        src={'/windpmslogo.svg'}
                         width={100}
                         height={100}
                         alt="logo"
@@ -56,7 +56,7 @@ export default function NavBar() {
             >
                 <Link href={"/"}>
                     <Image
-                        src={'windpmslogo.svg'}
+                        src={'/windpmslogo.svg'}
                         width={100}
                         height={100}
                         alt="logo"
