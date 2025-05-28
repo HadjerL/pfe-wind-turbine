@@ -1,7 +1,7 @@
 'use client'
 import { useDataStore } from "@/app/lib/dataStore";
 import { useEffect, useState } from "react";
-import { FaFilter } from "react-icons/fa";
+// import { FaFilter } from "react-icons/fa";
 
 export default function DateCard() {
     const data = useDataStore((state) => state.data);
@@ -31,9 +31,9 @@ export default function DateCard() {
                     </div>
                 </div>
             </div>
-            <button className="flex items-center justify-center p-2 bg-primary hover:bg-primary/80 text-white rounded-lg shadow-md transition duration-300">
-                <FaFilter className="text-lg" />
-            </button>
+            {/* <button className="flex items-center justify-center p-2 bg-primary hover:bg-primary/80 text-white rounded-lg shadow-md transition duration-300"> */}
+                {/* <FaFilter className="text-lg" /> */}
+            {/* </button> */}
         </div>
     );
 }
