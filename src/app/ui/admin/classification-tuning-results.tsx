@@ -60,11 +60,11 @@ export function ModelTuningResults({ results }: { results: TuningResults }) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Model Tuning Results</h1>
       
-      <div className="space-y-8">
+      <div className="flex space-x-8">
         {Object.entries(results.evaluation).map(([modelName, evaluation]) => (
-          <div key={modelName} className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div key={modelName} className="bg-white w-full rounded-xl shadow-md overflow-hidden">
             <div className="p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-semibold text-gray-800 capitalize">{modelName} Model</h2>
+              <h2 className="text-2xl font-semibold text-primary capitalize">{modelName} Model</h2>
             </div>
             
             <div className="divide-y divide-gray-200">
