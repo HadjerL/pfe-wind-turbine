@@ -28,7 +28,8 @@ const REQUIRED_COLUMNS = [
 ];
 
 const MINIMUM_ROWS = 576 / 2;
-const MQTT_BROKER_URL = 'ws://192.168.1.33:9001/mqtt';
+const MQTT_BROKER_URL = 'ws://192.168.239.118:9001/mqtt';
+// const MQTT_BROKER_URL = 'ws://192.168.1.33:9001/mqtt';
 // const MQTT_BROKER_URL = 'ws://192.168.251.118:9001/mqtt';
 // const MQTT_BROKER_URL = 'ws://test.mosquitto.org:8080/mqtt';
 const MQTT_OPTIONS = {
@@ -54,7 +55,8 @@ export default function RealTimeSystem() {
     const fetchClassifications = useCallback(async (data: DataPoint[]) => {
         setIsLoading(true);
         try {
-            const response = await fetch("http://192.168.1.33:5000/predict", {
+            const response = await fetch("http://192.168.239.118:5000/predict", {
+            // const response = await fetch("http://192.168.239.117:5000/predict", {
             // const response = await fetch("http://192.168.251.118:5000/predict", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -78,7 +80,8 @@ export default function RealTimeSystem() {
     const fetchForecast = useCallback(async (data: DataPoint[]) => {
         setIsLoading(true);
         try {
-            const res = await fetch("http://192.168.1.33:5000/predict_forecast", {
+            const res = await fetch("http://192.168.239.118:5000/predict_forecast", {
+            // const res = await fetch("http://192.168.239.117:5000/predict_forecast", {
             // const res = await fetch("http://192.168.251.118:5000/predict_forecast", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

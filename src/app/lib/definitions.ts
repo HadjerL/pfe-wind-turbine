@@ -34,3 +34,57 @@ export type Forecast = {
     timestamp: string;
     power_output: number;
 }
+
+export type ClassificationMetric = {
+    precision: number;
+    recall: number;
+    'f1-score': number;
+    support: number;
+};
+
+export type ClassificationReport = {
+    [key: string]: ClassificationMetric | number;
+};
+
+export type PairMetric = {
+    pair: string;
+    precision: number;
+    recall: number;
+    f1_score: number;
+    support: number;
+};
+
+export type ClassPairEvaluation = {
+    accuracy_two_active: number | null;
+    pair_metrics: PairMetric[];
+};
+
+export type NormalVsAbnormalEvaluation = {
+    accuracy: number;
+    classification_report: ClassificationReport;
+};
+
+export type SingleClassEvaluation = {
+    accuracy: number | null;
+    classification_report: ClassificationReport | null;
+    message?: string;
+};
+
+export type MultiLabelEvaluation = {
+    accuracy: number;
+    classification_report: ClassificationReport;
+};
+
+export type ModelEvaluation = {
+    class_pair_evaluation: ClassPairEvaluation;
+    evaluate_normal_vs_abnormal: NormalVsAbnormalEvaluation;
+    evaluate_single_class: SingleClassEvaluation;
+    multi_label_evaluation: MultiLabelEvaluation;
+};
+
+export type TuningResults = {
+    evaluation: {
+        [modelName: string]: ModelEvaluation;
+    };
+    message: string;
+};
