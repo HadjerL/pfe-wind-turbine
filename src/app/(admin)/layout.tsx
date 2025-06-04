@@ -1,4 +1,10 @@
-import NavBar from "@/app/ui/home/nav-bar";
+import NavBar from "../ui/admin/home/nav-bar";
+
+
+const links = [
+    { name: 'Classification', href: '/managing/classification' },
+    { name: 'Forecasting', href: '/managing/forecasting' },
+];
 
 export default function RootLayout({
     children,
@@ -7,7 +13,7 @@ export default function RootLayout({
 }>) {
     return (
         <>
-            <NavBar/>
+            <NavBar links={links}/>
             <div >{children}</div>
         </>
     );

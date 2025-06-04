@@ -43,7 +43,7 @@ export function ModelComparisonBarChart({ data, title }: ModelComparisonBarChart
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
 
   return (
-    <div className=" w-2/3 shadow-md rounded-lg">
+    <div className="w-full md:w-2/3 shadow-md rounded-lg">
       <div className="bg-slate-100 p-4 flex flex-row justify-between">
         <h1 className="text-sm font-bold">{title}</h1>
         <DownloadBarButton chartRef={chartRef} filename={`${title.replace(/\s+/g, '-').toLowerCase()}.png`} />
@@ -96,7 +96,7 @@ export function ClassDistributionPieChart({ data, title }: ClassDistributionPieC
   const chartRef = useRef<ChartJS<'pie'> | null>(null);
 
   return (
-    <div className="w-1/3 shadow-md rounded-lg">
+    <div className="w-full md:w-1/3 shadow-md rounded-lg">
       <div className="bg-slate-100 p-4 flex flex-row justify-between">
         <h1 className="text-sm font-bold">{title}</h1>
         <DownloadPieButton chartRef={chartRef} filename={`${title.replace(/\s+/g, '-').toLowerCase()}.png`} />

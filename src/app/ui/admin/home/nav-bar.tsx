@@ -2,10 +2,11 @@
 
 import { IoCloseOutline } from "react-icons/io5";
 import { IoMenu } from "react-icons/io5";
-import NavLinks, { LinkItem } from "./nav-links";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import NavLinks, { LinkItem } from "./nav-links";
+
 
 export default function NavBar({
     links

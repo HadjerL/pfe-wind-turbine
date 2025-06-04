@@ -8,6 +8,7 @@ import Uploader from "@/app/ui/admin/uploader";
 import { GoGraph } from "react-icons/go";
 import { CiViewTable } from "react-icons/ci";
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +26,7 @@ export default function RootLayout({
           onClick={() => setActiveTab('graphical')}
           className={`px-4 py-2 font-medium ${activeTab === 'graphical' ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
         >
-          <Link href="/managing" className='flex items-center gap-2'>
+          <Link href="/managing/classification" className='flex items-center gap-2'>
             <p>Graphical View</p>
             <GoGraph className='text-lg'/>
           </Link>
@@ -34,8 +35,8 @@ export default function RootLayout({
           onClick={() => setActiveTab('datatables')}
           className={`px-4 py-2 font-medium ${activeTab === 'datatables' ? 'text-primary border-b-2 border-primary' : 'text-gray-500'}`}
         >
-          <Link href="/managing/datatables" className='flex items-center gap-2'>
-          <p>Data Tables</p>
+          <Link href="/managing/classification/datatables" className='flex items-center gap-2'>
+          <p>Classification reports</p>
           <CiViewTable className='text-lg'/>
           </Link>
         </button>

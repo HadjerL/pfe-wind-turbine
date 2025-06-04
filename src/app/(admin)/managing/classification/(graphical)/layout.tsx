@@ -42,7 +42,7 @@ export default function RootLayout({
                   <MdKeyboardArrowRight className="h-4 w-4 text-gray-400 mx-2" />
                 )}
                 <Link
-                  href={method.id === 'multi-label'? `/managing` : `/managing/${method.path}`}
+                  href={method.id === 'multi-label'? `/managing/classification` : `/managing/classification/${method.path}`}
                   onClick={() => setActiveEvaluation(method.id)}
                   className={`text-sm font-medium ${activeEvaluation === method.id ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
                 >

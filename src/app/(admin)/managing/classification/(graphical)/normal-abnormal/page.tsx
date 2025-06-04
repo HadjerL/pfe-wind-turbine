@@ -83,7 +83,7 @@ export default function NormalAbnormalEvaluationPage() {
   }
 
   return (
-    <div className="flex space-x-6">
+    <div className="flex flex-col space-y-6 md:flex-row md:space-y-0 md:space-x-6">
       {modelComparisonData && (
         <ModelComparisonBarChart 
           data={modelComparisonData} 
