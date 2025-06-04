@@ -18,7 +18,7 @@ export default function NormalAbnormalEvaluationPage() {
     return {
       labels: metrics,
       datasets: models.map((model, index) => {
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56'];
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
         const evaluation = tuningResults.evaluation[model].evaluate_normal_vs_abnormal;
         const normalMetrics = typeof evaluation.classification_report.Normal === 'object' && evaluation.classification_report.Normal !== null
           ? evaluation.classification_report.Normal as ClassificationMetric

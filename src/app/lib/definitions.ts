@@ -88,3 +88,53 @@ export type TuningResults = {
     };
     message: string;
 };
+
+
+export interface ForecastOverallMetrics {
+    mse: number;
+    rmse: number;
+    mae: number;
+    r2: number;
+    mape: number;
+    mean_test: number;
+}
+
+export interface ForecastStepMetric {
+    horizon: number;
+    mse: number;
+    rmse: number;
+    mae: number;
+    r2: number;
+    mape: number;
+}
+
+export interface ForecastVisualizationData {
+    input_sequence: {
+        timestamps: string[];
+        values: number[];
+    };
+    predicted_values: {
+        timestamps: string[];
+        values: number[];
+    };
+    true_values: {
+        timestamps: string[];
+        values: number[];
+    };
+}
+
+export interface ForecastModelEvaluation {
+    overall_metrics: ForecastOverallMetrics;
+    step_metrics: ForecastStepMetric[];
+    test_samples: number;
+    train_samples: number;
+    visualization_data: ForecastVisualizationData[];
+}
+
+export interface ForecastTuningResults {
+    forecast_horizon: number;
+    message: string;
+    results: {
+        [modelName: string]: ForecastModelEvaluation;
+    };
+}
