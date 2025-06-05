@@ -1,22 +1,16 @@
 'use client';
-
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface AuthGuardProps {
-  children: React.ReactNode;
-}
-
-export default function AuthGuard({ children }: AuthGuardProps) {
+export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token'); // or whatever key you use
-
-    if (!token) {
-      router.push('/login');  // redirect to login if no token
+    const isLoggedIn = document.cookie.includes('token=authenticated');
+    if (!isLoggedIn) {
+      router.push('/login');
     }
   }, [router]);
 
-  return <>{children}</>; // render children if token exists (auth passed)
+  return <>{children}</>;
 }

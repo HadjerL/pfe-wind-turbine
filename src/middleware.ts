@@ -1,20 +1,23 @@
-// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
+  const { pathname } = request.nextUrl;
 
-  const isManagingRoute = request.nextUrl.pathname.startsWith('/managing');
-
-  if (isManagingRoute && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (pathname.startsWith('/login') || pathname.startsWith('/api')) {
+    return NextResponse.next();
   }
 
-  // Allow the request to proceed
+  // Protected routes
+  if (pathname.startsWith('/managing') && token !== 'authenticated') {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
   return NextResponse.next();
 }
 
-
 export const config = {
-  matcher: ['/managing/:path*'], 
+  matcher: ['/managing/:path*'],
 };
