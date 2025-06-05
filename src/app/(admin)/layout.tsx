@@ -1,5 +1,5 @@
 import NavBar from "../ui/admin/home/nav-bar";
-
+import AuthGuard from '@/app/components/AuthGuard'; 
 
 const links = [
     { name: 'Classification', href: '/managing/classification' },
@@ -13,8 +13,10 @@ export default function RootLayout({
 }>) {
     return (
         <>
-            <NavBar links={links}/>
-            <div >{children}</div>
+            <NavBar links={links} />
+            <AuthGuard>
+                <div>{children}</div>
+            </AuthGuard>
         </>
     );
 }
