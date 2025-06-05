@@ -28,6 +28,7 @@ export default function Login() {
     }
 
     //login api here
+    console.log(password, email);
   };
 
   return (
