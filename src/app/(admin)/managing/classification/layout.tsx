@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import Uploader from "@/app/ui/admin/uploader";
 import { GoGraph } from "react-icons/go";
 import { CiViewTable } from "react-icons/ci";
+import AvailableModels from '@/app/ui/admin/available-models';
 
 
 export default function RootLayout({
@@ -19,6 +20,7 @@ export default function RootLayout({
 
   return (
     <div className="flex flex-col min-h-screen">
+      <AvailableModels models_type='classification' />
       <Uploader />
       
       <div className="flex border-b border-gray-200 px-8">

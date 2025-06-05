@@ -42,7 +42,7 @@ export default function NavBar({
     return (
         <div>
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex flex-row items-end justify-between py-4 px-20 shadow-sm shadow-black/20">
+            <nav className="hidden md:flex flex-row items-end justify-between border py-4 px-20 shadow-sm shadow-black/20">
                 <Link href={"/"}>
                     <Image
                         src={'/windpmslogo.svg'}
@@ -56,7 +56,7 @@ export default function NavBar({
 
             {/* Mobile Navigation */}
             <nav
-                className="relative flex md:hidden flex-row items-end justify-between py-4 px-4 shadow-sm shadow-black/20"
+                className="relative flex md:hidden flex-row border items-end justify-between py-4 px-4 shadow-sm shadow-black/20"
                 ref={menuRef}
             >
                 <Link href={"/"}>
