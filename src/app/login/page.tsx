@@ -1,20 +1,21 @@
 'use client';
+
 import { useState } from 'react';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-//   const router = useRouter();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Basic validation
+    // Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       setLoading(false);
@@ -27,7 +28,28 @@ export default function Login() {
       return;
     }
 
-    //login api here
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log('Login successful:', data);
+        localStorage.setItem('token', data.token); // store token here
+        router.push('/managing/forecasting');      // redirect after login
+      } else {
+        const errorData = await res.json();
+        setError(errorData.error || 'Login failed');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,7 +70,6 @@ export default function Login() {
         )}
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
