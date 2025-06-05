@@ -146,7 +146,7 @@ export default function Uploader() {
           className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
           disabled={isLoading || uploadedData.length === 0}
         >
-          Tune Models
+          Tune Classification Models
         </button>
       </div>
     </div>

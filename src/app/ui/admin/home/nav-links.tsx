@@ -40,7 +40,7 @@ export default function NavLinks({
                     )
                 })
             }
-            <Link href='/login' className="cursor-pointer bg-primary text-white px-6 py-2 rounded-md font-semibold">Login</Link>
+            <Link href='/login' className="cursor-pointer border-2 hover:bg-white hover:border-primary hover:text-primary px-6 py-2 rounded-md font-semibold border-white bg-gray-400 text-white">Logout</Link>
         </ul>
     )
 }

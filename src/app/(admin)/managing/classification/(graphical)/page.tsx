@@ -28,7 +28,7 @@ export default function MultiLabelEvaluationPage() {
     return {
       labels: metrics,
       datasets: models.map((model, index) => {
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56'];
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
         const evaluation = tuningResults.evaluation[model].multi_label_evaluation;
         const classificationReport = evaluation.classification_report as ClassificationReport;
         const macroAvg = classificationReport['macro avg'];
