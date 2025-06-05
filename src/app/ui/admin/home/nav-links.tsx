@@ -9,17 +9,34 @@ export type LinkItem = {
   href: string;
 };
 
-export default function NavLinks({
-  links
-}: {
-  links: LinkItem[];
-}) {
+export default function NavLinks({ links }: { links: LinkItem[] }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');     
-    router.push('/login');                
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/admin/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Redirect to login page
+      router.push('/login');
+      // Force refresh to ensure all auth state is cleared
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Fallback client-side cookie deletion
+      document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      router.push('/login');
+      window.location.reload();
+    }
   };
 
   return (
@@ -29,9 +46,7 @@ export default function NavLinks({
           key={link.name}
           className={clsx(
             "border-b-2 border-transparent hover:border-primary duration-75",
-            {
-              "": link.href === pathname,
-            }
+            { "": link.href === pathname }
           )}
         >
           <Link href={link.href}>

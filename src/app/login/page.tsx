@@ -35,12 +35,10 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log('Login successful:', data);
-        localStorage.setItem('token', data.token); // store token here
-        router.push('/managing/forecasting');      // redirect after login
-      } else {
+    if (res.ok) {
+ 
+       router.push('/managing/forecasting');
+    }else {
         const errorData = await res.json();
         setError(errorData.error || 'Login failed');
       }
