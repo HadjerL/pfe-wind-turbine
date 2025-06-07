@@ -36,8 +36,7 @@ const REQUIRED_COLUMNS = [
 
 export default function Uploader() {
     const uploadedData = useDataStore((state) => state.uploadedData);
-    const tuna = useDataStore((state) => state.tuningResults);
-    console.log("🚀 ~ Uploader ~ tuna:", tuna)
+    // const tuna = useDataStore((state) => state.tuningResults);
     const setUploadedData = useDataStore((state) => state.setUploadedData);
     const setTuningResults = useDataStore((state) => state.setTuningResults);
     const clearTuningResults = useDataStore((state) => state.clearTuningResults);
@@ -64,7 +63,8 @@ export default function Uploader() {
     clearTuningResults();
     console.log(data);
     try {
-      const response = await fetch('http://192.168.239.118:5000/tune_models', {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${backendUrl}/tune_models`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),

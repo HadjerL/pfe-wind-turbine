@@ -44,7 +44,8 @@ export default function ForecastUploader() {
         clearForecastEvaluation();
         
         try {
-            const response = await fetch('http://192.168.239.118:5000/tune_forecast', {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${backendUrl}/tune_forecast`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(uploadedData),

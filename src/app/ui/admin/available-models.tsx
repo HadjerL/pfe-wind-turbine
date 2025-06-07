@@ -1,23 +1,22 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { FaRobot, FaSyncAlt, FaHistory, FaTrash } from 'react-icons/fa';
+import { FaRobot, FaSyncAlt, FaTrash } from 'react-icons/fa';
 import { GiWindTurbine } from 'react-icons/gi';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 type ModelInfo = {
-  model_name: string;
+  name: string;
+  version: string;
+  path: string;
   is_current: boolean;
-  is_tuned?: boolean;
-  is_old?: boolean;
-  can_delete?: boolean;
+  is_tuned: boolean;
 };
 
 type ModelsResponse = {
-  classification_models?: ModelInfo[];
-  forecasting_models?: ModelInfo[];
-  current_model: string;
-  has_old_model?: boolean;
+  models: ModelInfo[];
+  current_model: string | null;
 };
 
 export default function ModelInfo({
@@ -28,7 +27,6 @@ export default function ModelInfo({
   const [models, setModels] = useState<ModelsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [showOldModels, setShowOldModels] = useState(false);
 
   const fetchModels = useCallback(async () => {
     try {
@@ -46,17 +44,7 @@ export default function ModelInfo({
         throw new Error(data.error || 'Failed to load model information');
       }
 
-      // Mark models that can be deleted (not current and not only backup)
-      const processedData = {
-        ...data,
-        [models_type === 'classification' ? 'classification_models' : 'forecasting_models']: 
-          data[models_type === 'classification' ? 'classification_models' : 'forecasting_models'].map((model: ModelInfo) => ({
-            ...model,
-            can_delete: !model.is_current && !(model.is_old && data.has_old_model && data.has_old_model > 1)
-          }))
-      };
-
-      setModels(processedData);
+      setModels(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load model information');
       console.error(err);
@@ -65,70 +53,39 @@ export default function ModelInfo({
     }
   }, [models_type]);
 
-  const setActiveModel = async (modelName: string) => {
+  const setActiveModel = async (modelName: string, version: string) => {
     try {
-      const endpoint = models_type === 'classification'
-        ? '/api/set_active_classification_model'
-        : '/api/set_active_forecasting_model';
-      
-      const response = await fetch(endpoint, {
+      const response = await fetch(`/api/set_active_model/${models_type}/${modelName}/${version}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model_name: modelName })
       });
-
+    
       if (!response.ok) {
         throw new Error(await response.text());
       }
-
-      toast.success(`Model ${modelName} set as active`);
-      fetchModels(); // Refresh the list
+    
+      toast.success(`Model ${modelName} ${version} set as active`);
+      fetchModels();
     } catch (err) {
       toast.error(`Failed to set active model: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
   };
-
-  const restoreOldModel = async () => {
-    try {
-      const endpoint = models_type === 'classification'
-        ? '/api/restore_old_classification_model'
-        : '/api/restore_old_forecasting_model';
-      
-      const response = await fetch(endpoint, { method: 'POST' });
-
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
-
-      toast.success('Old model restored');
-      fetchModels(); // Refresh the list
-    } catch (err) {
-      toast.error(`Failed to restore old model: ${err instanceof Error ? err.message : 'Unknown error'}`);
-    }
-  };
-
-  const deleteModel = async (modelName: string) => {
-    if (!confirm(`Are you sure you want to delete ${modelName}? This cannot be undone.`)) {
+  
+  const deleteModel = async (modelName: string, version: string) => {
+    if (!confirm(`Are you sure you want to delete ${modelName} ${version}? This cannot be undone.`)) {
       return;
     }
-
+  
     try {
-      const endpoint = models_type === 'classification'
-        ? '/api/delete_classification_model'
-        : '/api/delete_forecasting_model';
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model_name: modelName })
+      const response = await fetch(`/api/delete_model/${models_type}/${modelName}/${version}`, {
+        method: 'DELETE',
       });
-
+    
       if (!response.ok) {
         throw new Error(await response.text());
       }
-
-      toast.success(`Model ${modelName} deleted`);
-      fetchModels(); // Refresh the list
+    
+      toast.success(`Model ${modelName} ${version} deleted`);
+      fetchModels();
     } catch (err) {
       toast.error(`Failed to delete model: ${err instanceof Error ? err.message : 'Unknown error'}`);
     }
@@ -151,14 +108,14 @@ export default function ModelInfo({
   if (error) return <div className="p-4 text-red-500 text-center">{error}</div>;
   if (!models) return null;
 
-  const modelList = models_type === 'classification' 
-    ? models.classification_models 
-    : models.forecasting_models;
-
-  // Filter out old models unless explicitly shown
-  const filteredModels = modelList?.filter(model => 
-    showOldModels || !model.is_old
-  ) || [];
+  // Group models by name
+  const modelGroups = models.models.reduce((groups, model) => {
+    if (!groups[model.name]) {
+      groups[model.name] = [];
+    }
+    groups[model.name].push(model);
+    return groups;
+  }, {} as Record<string, ModelInfo[]>);
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg shadow mb-4">
@@ -166,26 +123,13 @@ export default function ModelInfo({
         <h2 className="text-lg text-primary font-semibold">
           Available {models_type.charAt(0).toUpperCase() + models_type.slice(1)} Models
         </h2>
-        
-        <div className="flex gap-2">
-          {models.has_old_model && (
-            <button
-              onClick={restoreOldModel}
-              className="flex items-center gap-1 text-sm bg-yellow-100 text-yellow-800 px-3 py-1 rounded hover:bg-yellow-200"
-              title="Restore previous model"
-            >
-              <FaHistory className="text-xs" />
-              <span>Restore Previous</span>
-            </button>
-          )}
-          
-          <button
-            onClick={() => setShowOldModels(!showOldModels)}
-            className="text-sm text-gray-600 hover:text-gray-800"
-          >
-            {showOldModels ? 'Hide old models' : 'Show old models'}
-          </button>
-        </div>
+        <button 
+          onClick={() => fetchModels()}
+          className="flex items-center gap-1 text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded hover:bg-blue-200"
+        >
+          <FaSyncAlt className="text-xs" />
+          <span>Refresh</span>
+        </button>
       </div>
       
       <div className="bg-white p-3 rounded border">
@@ -197,71 +141,63 @@ export default function ModelInfo({
           )}
           <h3 className="font-medium text-gray-700">
             {models_type === 'classification' ? 'Classification' : 'Forecasting'} Models
-            <span className="ml-2 text-xs font-normal text-gray-500">
-              (Current: {models.current_model.replace('(current)', '').trim()})
-            </span>
+            {models.current_model && (
+              <span className="ml-2 text-xs font-normal text-gray-500">
+                (Current: {models.current_model})
+              </span>
+            )}
           </h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredModels.map((model) => (
-            <div 
-              key={model.model_name}
-              className={`border rounded p-3 flex flex-col ${
-                model.is_current ? 'border-primary bg-primary/10' : 
-                model.is_old ? 'border-yellow-300 bg-yellow-50' : 'border-gray-200'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <span className={`font-medium ${
-                  model.is_current ? 'text-primary' : 
-                  model.is_old ? 'text-yellow-700' : 'text-gray-700'
-                }`}>
-                  {model.model_name.toUpperCase()}
-                  {model.is_tuned && <span className="text-xs ml-1 text-green-600">(tuned)</span>}
-                  {model.is_old && <span className="text-xs ml-1 text-yellow-600">(old)</span>}
-                </span>
-                
-                {model.is_current ? (
-                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
-                    Active
-                  </span>
-                ) : (
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => setActiveModel(model.model_name)}
-                      className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200"
-                    >
-                      Set Active
-                    </button>
-                    {model.can_delete && (
-                      <button
-                        onClick={() => deleteModel(model.model_name)}
-                        className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded hover:bg-red-200"
-                        title="Delete model"
-                      >
-                        <FaTrash className="text-xs" />
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+        <div className="space-y-4">
+          {Object.entries(modelGroups).map(([modelName, versions]) => (
+            <div key={modelName} className="border rounded p-3">
+              <h4 className="font-medium text-lg mb-2">{modelName.toUpperCase()}</h4>
               
-              <div className="mt-auto pt-2 border-t border-gray-100 text-xs text-gray-500">
-                {model.is_current && (
-                  <button 
-                    onClick={() => fetchModels()}
-                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {versions.map((model) => (
+                  <div 
+                    key={model.version}
+                    className={`border rounded p-2 flex flex-col ${
+                      model.is_current ? 'border-primary bg-primary/10' : 'border-gray-200'
+                    }`}
                   >
-                    <FaSyncAlt className="text-xs" />
-                    <span>Refresh Status</span>
-                  </button>
-                )}
+                    <div className="flex justify-between items-start">
+                      <span className={model.is_current ? 'font-semibold text-primary' : 'text-gray-700'}>
+                        {model.version}
+                        {model.is_tuned && <span className="text-xs ml-1 text-green-600">(tuned)</span>}
+                      </span>
+                      
+                      {model.is_current ? (
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                          Active
+                        </span>
+                      ) : (
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setActiveModel(model.name, model.version)}
+                            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded hover:bg-blue-200"
+                          >
+                            Set Active
+                          </button>
+                          <button
+                            onClick={() => deleteModel(model.name, model.version)}
+                            className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded hover:bg-red-200"
+                            title="Delete model"
+                          >
+                            <FaTrash className="text-xs" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

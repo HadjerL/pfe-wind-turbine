@@ -70,10 +70,8 @@ export default function Uploader() {
         setIsLoading(true);
         try {
             // await new Promise((resolve) => setTimeout(resolve, 1000));
-            
-            const response = await fetch("http://192.168.239.118:5000/predict", {
-            // const response = await fetch("http://192.168.239.117:5000/predict", {
-            // const response = await fetch("http://127.0.0.1:5000/predict", {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${backendUrl}/predict`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
@@ -100,10 +98,8 @@ export default function Uploader() {
         setIsLoading(true);
         try {
             // await new Promise((resolve) => setTimeout(resolve, 1000));
-            
-            const res = await fetch("http://192.168.239.118:5000/predict_forecast", {
-            // const res = await fetch("http://192.168.239.117:5000/predict_forecast", {
-            // const res = await fetch("http://127.0.0.1:5000/predict_forecast", {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const res = await fetch(`${backendUrl}/predict_forecast`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data.slice(-MINIMUM_ROWS)), // Send only the most recent 576 rows
