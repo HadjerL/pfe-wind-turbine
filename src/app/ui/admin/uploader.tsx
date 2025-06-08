@@ -36,7 +36,8 @@ const REQUIRED_COLUMNS = [
 
 export default function Uploader() {
     const uploadedData = useDataStore((state) => state.uploadedData);
-    // const tuna = useDataStore((state) => state.tuningResults);
+    const tuna = useDataStore((state) => state.tuningResults);
+    console.log("🚀 ~ Uploader ~ tuna:", tuna)
     const setUploadedData = useDataStore((state) => state.setUploadedData);
     const setTuningResults = useDataStore((state) => state.setTuningResults);
     const clearTuningResults = useDataStore((state) => state.clearTuningResults);
