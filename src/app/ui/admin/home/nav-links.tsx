@@ -58,7 +58,7 @@ export default function NavLinks({ links }: { links: LinkItem[] }) {
       <li>
         <button
           onClick={handleLogout}
-          className="cursor-pointer border-2 hover:bg-white hover:border-primary hover:text-primary px-6 py-2 rounded-md font-semibold border-white bg-gray-400 text-white"
+          className="cursor-pointer border-2 border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 hover:border-gray-400 hover:text-gray-900 px-6 py-2 rounded-md font-semibold transition-colors duration-150"
         >
           Logout
         </button>

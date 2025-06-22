@@ -37,7 +37,7 @@ export default function Login() {
 
     if (res.ok) {
  
-       router.push('/managing/forecasting');
+       router.push('/managing');
     }else {
         const errorData = await res.json();
         setError(errorData.error || 'Login failed');
