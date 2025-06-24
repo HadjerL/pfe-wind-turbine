@@ -12,6 +12,7 @@ type ModelInfo = {
   version: string;
   path: string;
   is_current: boolean;
+  creation_date: string;
   is_tuned: boolean;
 };
 
@@ -61,6 +62,7 @@ export default function ModelInfo({
       
       const response = await fetch(endpoint);
       const data = await response.json();
+      console.log("🚀 ~ fetchModels ~ data:", data)
       
       if (!response.ok) {
         throw new Error(data.error || 'Failed to load model information');
@@ -291,6 +293,7 @@ export default function ModelInfo({
     groups[model.name].push(model);
     return groups;
   }, {} as Record<string, ModelInfo[]>);
+  console.log("🚀 ~ modelGroups ~ models:", models)
 
   return (
     <div className="bg-gray-50 p-4 rounded-lg shadow mb-4">
@@ -351,6 +354,21 @@ export default function ModelInfo({
                   const isEvaluateLoading = buttonStates.evaluate[modelKey];
                   const isEvaluated = evaluatedModels.includes(modelKey);
 
+                    interface FormatDate {
+                    (dateString: string | undefined): string;
+                    }
+
+                    const formatDate: FormatDate = (dateString) => {
+                    if (!dateString) return 'No date';
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    });
+                    };
                   return (
                     <div 
                       key={model.version}
@@ -361,7 +379,9 @@ export default function ModelInfo({
                       <div className="flex justify-between items-start">
                         <span className={model.is_current ? 'font-semibold text-primary' : 'text-gray-700'}>
                           {model.version}
-                          {model.is_tuned && <span className="text-xs ml-1 text-green-600">(tuned)</span>}
+                          <span className="text-xs text-gray-500">
+                            &emsp;({formatDate(model.creation_date)})
+                          </span>
                         </span>
                         
                         {model.is_current ? (
