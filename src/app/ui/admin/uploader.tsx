@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { useDataStore } from '@/app/lib/dataStore';
-import { DataPoint } from '@/app/lib/definitions';
+import { DataPoint, HyperparameterConfig } from '@/app/lib/definitions';
+import { ModelConfigForm } from './model_conf';
 
 const REQUIRED_COLUMNS = [
   'Timestamp',
@@ -44,6 +45,7 @@ export default function Uploader() {
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+   const [showNewModelForm, setShowNewModelForm] = useState(false);
 
   const validateColumns = (headers: string[]): boolean => {
     const missingColumns = REQUIRED_COLUMNS.filter(
@@ -123,33 +125,93 @@ export default function Uploader() {
       error: (err) => setError(`Parsing error: ${err.message}`),
     });
   };
+  const fetchNewModelTraining = async (data: DataPoint[], config: HyperparameterConfig) => {
+        setIsLoading(true);
+        clearTuningResults();
+        setError(null);
+        
+        try {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${backendUrl}/train_new_model`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    data,
+                    config
+                }),
+            });
 
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to train new model: ${errorText}`);
+            }
+
+            const trainingResults = await response.json();
+            console.log("🚀 ~ fetchNewModelTraining ~ trainingResults:", trainingResults)
+            setTuningResults(trainingResults);
+        } catch (err) {
+            setError(
+                `Error training model: ${
+                    err instanceof Error ? err.message : 'Unknown error'
+                }`
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
   return (
-    <div className="p-4 border rounded shadow">
-      <h2 className="text-lg font-bold mb-2 text-primary">Upload CSV File</h2>
-      <div className="flex flex-col md:flex-row gap-5">
-        <input
-          type="file"
-          accept=".csv"
-          onChange={handleFileParse}
-          className="border p-2 rounded bg-slate-100 w-full md:w-fit"
-          disabled={isLoading}
-        />
-      </div>
-      {isLoading && (
-        <p className="text-blue-500 mt-2 animate-pulse">Processing file... Please wait.</p>
-      )}
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+        <div className="space-y-4">
+            <div className="p-4 border rounded shadow">
+                <h2 className="text-lg font-bold mb-2 text-primary">Upload CSV File</h2>
+                <div className="flex flex-col md:flex-row gap-5">
+                    <input
+                        type="file"
+                        accept=".csv"
+                        onChange={handleFileParse}
+                        className="border p-2 rounded bg-slate-100 w-full md:w-fit"
+                        disabled={isLoading}
+                    />
+                </div>
+                {isLoading && (
+                    <p className="text-blue-500 mt-2 animate-pulse">Processing file... Please wait.</p>
+                )}
+                {error && <p className="text-red-500 mt-2">{error}</p>}
 
-      <div className="mt-4">
-        <button
-          onClick={handleTuneModels}
-          className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-          disabled={isLoading || uploadedData.length === 0}
-        >
-          Tune Classification Models
-        </button>
-      </div>
-    </div>
-  );
+                <div className="mt-4 flex gap-4">
+                    <button
+                        onClick={() => setShowNewModelForm(true)}
+                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:opacity-50"
+                        disabled={isLoading || uploadedData.length === 0}
+                    >
+                        Train New Model
+                    </button>
+                    
+                    <button
+                        onClick={handleTuneModels}
+                        className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                        disabled={isLoading || uploadedData.length === 0}
+                    >
+                        Tune Existing Models
+                    </button>
+                </div>
+            </div>
+
+            {showNewModelForm && (
+                <ModelConfigForm 
+                    onSubmit={(config) => {
+                        // Ensure optimizers are of the correct type
+                        const allowedOptimizers = ['adam', 'sgd', 'rmsprop'] as const;
+                        const safeConfig = {
+                            ...config,
+                            optimizers: (config.optimizers as string[]).filter((opt): opt is typeof allowedOptimizers[number] =>
+                                allowedOptimizers.includes(opt as typeof allowedOptimizers[number])
+                            ),
+                        };
+                        fetchNewModelTraining(uploadedData, safeConfig);
+                        setShowNewModelForm(false);
+                    }} 
+                />
+            )}
+        </div>
+    );
 }

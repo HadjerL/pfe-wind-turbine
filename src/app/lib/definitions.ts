@@ -82,11 +82,30 @@ export type ModelEvaluation = {
     multi_label_evaluation: MultiLabelEvaluation;
 };
 
+export type ModelHyperparameters = {
+  model_type: string;
+  architecture: string;
+  num_conv_layers?: number;
+  conv1_filters?: number;
+  num_dense_layers?: number;
+  dense1_units?: number;
+  batch_size: number;
+  optimizer: string;
+  learning_rate: number;
+  lstm_units?: number;
+  num_lstm_layers?: number;
+  rnn_units?: number;
+  num_rnn_layers?: number;
+};
+
 export type TuningResults = {
-    evaluation: {
-        [modelName: string]: ModelEvaluation;
-    };
-    message: string;
+  evaluation: {
+    [modelName: string]: ModelEvaluation;
+  };
+  hyperparameters?: {
+    [modelName: string]: ModelHyperparameters;
+  };
+  message: string;
 };
 
 
@@ -138,3 +157,33 @@ export interface ForecastTuningResults {
         [modelName: string]: ForecastModelEvaluation;
     };
 }
+
+export type HyperparameterConfig = {
+  modelType: 'CNN' | 'LSTM' | 'RNN';
+  maxTrials: number;
+  executionsPerTrial: number;
+  epochs: number;
+  patience: number;
+  batchSizes: number[];
+  optimizers: ('adam' | 'sgd' | 'rmsprop')[]
+  learningRates: number[];
+  
+  // CNN-specific parameters
+  convFilters?: number[];
+  numConvLayers?: number[];
+  denseUnits?: number[];
+  numDenseLayers?: number[];
+  
+  // LSTM-specific parameters
+  lstmUnits?: number[];
+  numLSTMLayers?: number[];
+  
+  // RNN-specific parameters
+  rnnUnits?: number[];
+  numRNNLayers?: number[];
+  
+  // Optional metadata
+  modelName?: string;
+  description?: string;
+  randomSeed?: number;
+};

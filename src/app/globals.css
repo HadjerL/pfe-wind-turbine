@@ -22,3 +22,20 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add smooth transitions */
+.hyperparam-card {
+  transition: all 0.3s ease;
+}
+
+.hyperparam-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive grid */
+@media (max-width: 768px) {
+  .hyperparam-grid {
+    grid-template-columns: 1fr;
+  }
+}

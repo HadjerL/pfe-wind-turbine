@@ -8,6 +8,8 @@ import Uploader from "@/app/ui/admin/uploader";
 import { GoGraph } from "react-icons/go";
 import { CiViewTable } from "react-icons/ci";
 import AvailableModels from '@/app/ui/admin/available-models';
+import { useDataStore } from '@/app/lib/dataStore';
+import HyperparametersDisplay from '@/app/ui/admin/home/training/HyperparametersDisplay';
 
 
 export default function RootLayout({
@@ -17,11 +19,14 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState(pathname.includes('datatables') ? 'datatables' : 'graphical');
-
+  const tuningResults = useDataStore((state) => state.tuningResults);
   return (
     <div className="flex flex-col min-h-screen">
       <AvailableModels models_type='classification' />
       <Uploader />
+      {tuningResults?.hyperparameters && (
+        <HyperparametersDisplay results={tuningResults} />
+      )}
       
       <div className="flex border-b border-gray-200 px-8">
         <button
