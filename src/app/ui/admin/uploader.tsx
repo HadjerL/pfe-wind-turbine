@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { useDataStore } from '@/app/lib/dataStore';
-import { DataPoint, HyperparameterConfig } from '@/app/lib/definitions';
+import { DataPoint, HyperparameterConfig, ModelEvaluation } from '@/app/lib/definitions';
 import { ModelConfigForm } from './model_conf';
 
 const REQUIRED_COLUMNS = [
@@ -125,6 +125,34 @@ export default function Uploader() {
       error: (err) => setError(`Parsing error: ${err.message}`),
     });
   };
+
+  const saveClassificationResults = async (
+  modelName: string,
+  modelType: string,
+  architecture: string,
+  hyperparameters: HyperparameterConfig,
+  evaluation: ModelEvaluation
+  ) => {
+    const response = await fetch('/api/models/classification', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: modelName,
+        modelType,
+        architecture,
+        hyperparameters,
+        evaluation
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save classification results');
+    }
+    return await response.json();
+  };
+
   const fetchNewModelTraining = async (data: DataPoint[], config: HyperparameterConfig) => {
         setIsLoading(true);
         clearTuningResults();
@@ -149,6 +177,19 @@ export default function Uploader() {
             const trainingResults = await response.json();
             console.log("🚀 ~ fetchNewModelTraining ~ trainingResults:", trainingResults)
             setTuningResults(trainingResults);
+            if (trainingResults.hyperparameters && trainingResults.evaluation) {
+              const modelName = Object.keys(trainingResults.evaluation)[0];
+              const hyperparams = trainingResults.hyperparameters;
+              const evaluation = trainingResults.evaluation[modelName];
+
+              await saveClassificationResults(
+                modelName,
+                hyperparams.model_type,
+                hyperparams.architecture,
+                hyperparams,
+                evaluation
+              );
+            }
         } catch (err) {
             setError(
                 `Error training model: ${

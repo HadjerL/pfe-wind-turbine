@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server';
 
 export async function POST(
   request: Request,
-  { params }: { params: { model_type: string; model_name: string; version: string } }
+  { params }: { params: { models_type: string, model_type: string; architecture: string; version: string } }
 ) {
   try {
-    const { model_type, model_name, version } = params;
+    const {models_type, model_type, architecture, version } = await params;
     
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-    const flaskEndpoint = `${backendUrl}/set_active_model/${model_type}/${model_name}/${version}`;
+    const flaskEndpoint = `${backendUrl}/set_active_model/${models_type}/${model_type}/${architecture}/${version}`;
     
     const response = await fetch(flaskEndpoint, {
       method: 'POST',

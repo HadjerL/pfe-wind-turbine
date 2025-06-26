@@ -17,6 +17,7 @@ type ClassificationReport = {
 
 export default function MultiLabelEvaluationPage() {
   const tuningResults = useDataStore((state) => state.tuningResults);
+  console.log("🚀 ~ MultiLabelEvaluationPage ~ tuningResults:", tuningResults)
 
   // Prepare data for model comparison bar chart
   const modelComparisonData = useMemo(() => {
@@ -28,6 +29,7 @@ export default function MultiLabelEvaluationPage() {
     return {
       labels: metrics,
       datasets: models.map((model, index) => {
+        console.log("🚀 ~ datasets:models.map ~ model:", model)
         const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
         const evaluation = tuningResults.evaluation[model].multi_label_evaluation;
         const classificationReport = evaluation.classification_report as ClassificationReport;

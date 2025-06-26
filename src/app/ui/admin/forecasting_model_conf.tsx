@@ -38,6 +38,7 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(config);
     onSubmit(config);
   };
 
@@ -93,28 +94,6 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
     });
   };
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof HyperparameterConfig) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value)) {
-      setConfig(prev => ({ ...prev, [field]: value }));
-    }
-  };
-
-  const handleArrayNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>, 
-    field: keyof HyperparameterConfig, 
-    index: number
-  ) => {
-    const value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      setConfig(prev => {
-        const arr = Array.isArray(prev[field]) ? [...(prev[field] as number[])] : [];
-        arr[index] = value;
-        return { ...prev, [field]: arr };
-      });
-    }
-  };
-
   return (
     <div className="p-4 border rounded shadow bg-white">
       <h2 className="text-lg font-bold mb-4 text-primary">New Model Configuration</h2>
@@ -126,12 +105,12 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
             <label className="block mb-2 font-medium">Model Type</label>
             <select
               value={config.modelType}
-              onChange={(e) => setConfig({...config, modelType: e.target.value as 'CNN' | 'LSTM' | 'RNN'})}
+              onChange={(e) => setConfig({...config, modelType: e.target.value as 'CNN' | 'LSTM'})}
               className="w-full p-2 border rounded"
             >
               <option value="CNN">CNN</option>
               <option value="LSTM">LSTM</option>
-              <option value="RNN">RNN</option>
+              {/* <option value="RNN">RNN</option> */}
             </select>
           </div>
 
@@ -142,7 +121,7 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
               min="1"
               max="100"
               value={config.maxTrials}
-              onChange={(e) => handleNumberChange(e, 'maxTrials')}
+              onChange={(e) => setConfig({...config, maxTrials: parseInt(e.target.value)})}
               className="w-full p-2 border rounded"
             />
           </div>
@@ -154,7 +133,7 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
               min="1"
               max="5"
               value={config.executionsPerTrial}
-              onChange={(e) => handleNumberChange(e, 'executionsPerTrial')}
+              onChange={(e) => setConfig({...config, executionsPerTrial: parseInt(e.target.value)})}
               className="w-full p-2 border rounded"
             />
           </div>
@@ -166,7 +145,7 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
               min="1"
               max="500"
               value={config.epochs}
-              onChange={(e) => handleNumberChange(e, 'epochs')}
+              onChange={(e) => setConfig({...config, epochs: parseInt(e.target.value)})}
               className="w-full p-2 border rounded"
             />
           </div>
@@ -178,7 +157,7 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
               min="1"
               max="20"
               value={config.patience}
-              onChange={(e) => handleNumberChange(e, 'patience')}
+              onChange={(e) => setConfig({...config, patience: parseInt(e.target.value)})}
               className="w-full p-2 border rounded"
             />
           </div>
@@ -205,9 +184,12 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                   <div key={index} className="flex items-center gap-2">
                     <input
                       type="number"
-                      min="1"
                       value={size}
-                      onChange={(e) => handleArrayNumberChange(e, 'batchSizes', index)}
+                      onChange={(e) => {
+                        const newSizes = [...config.batchSizes];
+                        newSizes[index] = parseInt(e.target.value);
+                        setConfig({...config, batchSizes: newSizes});
+                      }}
                       className="p-2 border rounded flex-1"
                     />
                     <button
@@ -276,9 +258,12 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                     <input
                       type="number"
                       step="0.001"
-                      // min="0.0001"
                       value={lr}
-                      onChange={(e) => handleArrayNumberChange(e, 'learningRates', index)}
+                      onChange={(e) => {
+                        const newLrs = [...config.learningRates];
+                        newLrs[index] = parseFloat(e.target.value);
+                        setConfig({...config, learningRates: newLrs});
+                      }}
                       className="p-2 border rounded flex-1"
                     />
                     <button
@@ -313,7 +298,11 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                           min="16"
                           step="16"
                           value={filters}
-                          onChange={(e) => handleArrayNumberChange(e, 'convFilters', index)}
+                          onChange={(e) => {
+                            const newFilters = [...config.convFilters];
+                            newFilters[index] = parseInt(e.target.value);
+                            setConfig({...config, convFilters: newFilters});
+                          }}
                           className="p-2 border rounded flex-1"
                         />
                         <button
@@ -345,7 +334,11 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                           min="16"
                           step="16"
                           value={units}
-                          onChange={(e) => handleArrayNumberChange(e, 'denseUnits', index)}
+                          onChange={(e) => {
+                            const newUnits = [...config.denseUnits];
+                            newUnits[index] = parseInt(e.target.value);
+                            setConfig({...config, denseUnits: newUnits});
+                          }}
                           className="p-2 border rounded flex-1"
                         />
                         <button
@@ -380,7 +373,11 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                         min="16"
                         step="16"
                         value={units}
-                        onChange={(e) => handleArrayNumberChange(e, 'lstmUnits', index)}
+                        onChange={(e) => {
+                          const newUnits = [...config.lstmUnits];
+                          newUnits[index] = parseInt(e.target.value);
+                          setConfig({...config, lstmUnits: newUnits});
+                        }}
                         className="p-2 border rounded flex-1"
                       />
                       <button
@@ -414,7 +411,11 @@ export function ModelConfigForm({ onSubmit }: { onSubmit: (config: Hyperparamete
                         min="16"
                         step="16"
                         value={units}
-                        onChange={(e) => handleArrayNumberChange(e, 'rnnUnits', index)}
+                        onChange={(e) => {
+                          const newUnits = [...config.rnnUnits];
+                          newUnits[index] = parseInt(e.target.value);
+                          setConfig({...config, rnnUnits: newUnits});
+                        }}
                         className="p-2 border rounded flex-1"
                       />
                       <button

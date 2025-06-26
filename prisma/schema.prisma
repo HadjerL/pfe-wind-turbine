@@ -21,3 +21,27 @@ model Admin {
   createdAt DateTime @default(now())
 }
 
+model ClassificationModel {
+  id              Int       @id @default(autoincrement())
+  name            String
+  modelType       String    // CNN, LSTM, RNN
+  architecture    String    // archi1, archi2, etc.
+  version         Int       @default(0)
+  hyperparameters Json      // Store the full hyperparameters object
+  evaluation      Json      // Store the full evaluation results
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ForecastModel {
+  id              Int       @id @default(autoincrement())
+  name            String
+  modelType       String    // CNN, LSTM
+  architecture    String    // archi1, archi2, etc.
+  version         Int       @default(0)
+  hyperparameters Json      // Store ForecastHyperparameters
+  evaluation      Json      // Store ForecastModelEvaluation
+  forecastHorizon Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}

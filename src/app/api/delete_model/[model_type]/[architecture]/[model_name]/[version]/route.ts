@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { model_type: string; model_name: string; version: string } }
+  { params }: { params: { model_type: string; architecture: string; model_name: string; version: string } }
 ) {
   try {
-    const { model_type, model_name, version } = params;
+    const { model_type, architecture, model_name, version } = await params;
     
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-    const flaskEndpoint = `${backendUrl}/delete_model/${model_type}/${model_name}/${version}`;
+    const flaskEndpoint = `${backendUrl}/delete_model/${model_type}/${architecture}/${model_name}/${version}`;
     
     const response = await fetch(flaskEndpoint, {
       method: 'DELETE',

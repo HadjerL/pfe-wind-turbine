@@ -43,7 +43,7 @@ export default function NavBar({
         <div>
             {/* Desktop Navigation */}
             <nav className="hidden md:flex flex-row items-end justify-between border py-4 px-20 shadow-sm shadow-black/20">
-                <Link href={"/"}>
+                <Link href={"/managing"}>
                     <Image
                         src={'/windpmslogo.svg'}
                         width={100}

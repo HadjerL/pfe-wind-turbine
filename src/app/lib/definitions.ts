@@ -150,13 +150,28 @@ export interface ForecastModelEvaluation {
     visualization_data: ForecastVisualizationData[];
 }
 
+export type ForecastHyperparameters = {
+  model_type: 'LSTM';
+  architecture: string;
+  num_layers: number;
+  units: number[];
+  activation: string;
+  use_dropout: boolean;
+  dropout_rate?: number;
+  optimizer: string;
+  learning_rate: number;
+  batch_size: number;
+};
+
 export interface ForecastTuningResults {
-    forecast_horizon: number;
-    message: string;
-    results: {
-        [modelName: string]: ForecastModelEvaluation;
-    };
+  forecast_horizon: number;
+  message: string;
+  results: {
+    [modelName: string]: ForecastModelEvaluation;
+  };
+  hyperparameters?: ForecastHyperparameters;
 }
+
 
 export type HyperparameterConfig = {
   modelType: 'CNN' | 'LSTM' | 'RNN';

@@ -11,6 +11,7 @@ import {
 
 export default function ForecastEvaluationPage() {
   const forecastEvaluation = useDataStore((state) => state.forecastEvaluation);
+  console.log("🚀 ~ ForecastEvaluationPage ~ forecastEvaluation:", forecastEvaluation)
 
   // Prepare data for model comparison bar chart
   const modelComparisonData = useMemo(() => {
@@ -18,13 +19,12 @@ export default function ForecastEvaluationPage() {
 
     const models = Object.keys(forecastEvaluation.results);
     const metrics = ['mae', 'mse', 'rmse', 'r2'];
-
     return {
       labels: metrics.map(metric => metric.toUpperCase()),
       datasets: models.map((model, index) => {
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56'];
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
         const overall = forecastEvaluation.results[model].overall_metrics;
-        
+        console.log(overall);
         return {
           label: model.toUpperCase(),
           data: [
@@ -77,12 +77,12 @@ export default function ForecastEvaluationPage() {
     },
     // True values
     {
-      label: 'Actual Values',
+      label: 'True Values',
       data: [...Array(inputValues.length).fill(null), ...trueValues],
-      borderColor: '#4BC0C0', // Emerald green
-      backgroundColor: '#4BC0C0',
-      borderWidth: 3,
-      pointRadius: 3,
+      borderColor: '#9966FF', // Emerald green, goes well with the rest
+      backgroundColor: '#9966FF',
+      borderWidth: 2,
+      pointRadius: 2,
     },
       // Add predictions from each model
       ...models
@@ -134,7 +134,7 @@ export default function ForecastEvaluationPage() {
     return {
       labels: horizons,
       datasets: models.map(([modelName, evaluation], index) => {
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56'];
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'];
         return {
           label: modelName.toUpperCase(),
           data: evaluation.step_metrics.map(step => step.mae),

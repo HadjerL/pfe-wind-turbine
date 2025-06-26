@@ -1,9 +1,9 @@
 'use client';
 
-import { TuningResults } from '@/app/lib/definitions';
+import { ModelHyperparameters } from '@/app/lib/definitions';
 
-export default function HyperparametersDisplay({ results }: { results: TuningResults }) {
-  if (!results.hyperparameters) return null;
+export default function HyperparametersDisplay({ results }: { results: ModelHyperparameters }) {
+  if (!results) return null;
 
   // Enhanced helper function to safely display any value
   const displayValue = (value: unknown): string => {
@@ -16,8 +16,8 @@ export default function HyperparametersDisplay({ results }: { results: TuningRes
     return String(value);
   };
 
-  // Get the hyperparameters directly (not from Object.entries)
-  const hyperparams = results.hyperparameters;
+  // Use results directly as the hyperparameters object
+  const hyperparams = results;
   const modelType: string = typeof hyperparams.model_type === 'string' ? hyperparams.model_type : 'N/A';
 
   return (
