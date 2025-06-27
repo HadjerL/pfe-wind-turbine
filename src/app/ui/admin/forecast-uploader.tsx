@@ -35,40 +35,40 @@ export default function ForecastUploader() {
         return true;
     };
 
-    const fetchModelTuning = async () => {
-        if (uploadedData.length === 0) {
-            setError('No data to evaluate');
-            return;
-        }
+    // const fetchModelTuning = async () => {
+    //     if (uploadedData.length === 0) {
+    //         setError('No data to evaluate');
+    //         return;
+    //     }
 
-        setIsLoading(true);
-        clearForecastEvaluation();
+    //     setIsLoading(true);
+    //     clearForecastEvaluation();
         
-        try {
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-            const response = await fetch(`${backendUrl}/tune_forecast`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(uploadedData),
-            });
+    //     try {
+    //         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    //         const response = await fetch(`${backendUrl}/tune_forecast`, {
+    //             method: 'POST',
+    //             headers: { 'Content-Type': 'application/json' },
+    //             body: JSON.stringify(uploadedData),
+    //         });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Failed to evaluate forecast: ${errorText}`);
-            }
+    //         if (!response.ok) {
+    //             const errorText = await response.text();
+    //             throw new Error(`Failed to evaluate forecast: ${errorText}`);
+    //         }
 
-            const results = await response.json();
-            setForecastEvaluation(results);
-        } catch (err) {
-            setError(
-                `Error evaluating forecast: ${
-                    err instanceof Error ? err.message : 'Unknown error'
-                }`
-            );
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    //         const results = await response.json();
+    //         setForecastEvaluation(results);
+    //     } catch (err) {
+    //         setError(
+    //             `Error evaluating forecast: ${
+    //                 err instanceof Error ? err.message : 'Unknown error'
+    //             }`
+    //         );
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
 
     const saveForecastResults = async (
       modelName: string,
@@ -159,10 +159,10 @@ export default function ForecastUploader() {
         }
     };
 
-    const handleTuneModels = () => {
-        setError(null);
-        fetchModelTuning();
-    };
+    // const handleTuneModels = () => {
+    //     setError(null);
+    //     fetchModelTuning();
+    // };
 
     const handleFileParse = (event: React.ChangeEvent<HTMLInputElement>) => {
         setError(null);
@@ -218,13 +218,13 @@ export default function ForecastUploader() {
                         Train New Model
                     </button>
                     
-                    <button
+                    {/* <button
                         onClick={handleTuneModels}
                         className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
                         disabled={isLoading || uploadedData.length === 0}
                     >
                         Tune Existing Models
-                    </button>
+                    </button> */}
                 </div>
             </div>
 

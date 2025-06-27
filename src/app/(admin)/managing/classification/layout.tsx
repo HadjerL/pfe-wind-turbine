@@ -22,8 +22,8 @@ export default function RootLayout({
   const tuningResults = useDataStore((state) => state.tuningResults);
   return (
     <div className="flex flex-col min-h-screen">
-      <AvailableModels models_type='classification' />
       <Uploader />
+      <AvailableModels models_type='classification' />
       {tuningResults?.hyperparameters && (
         <HyperparametersDisplay results={tuningResults} />
       )}

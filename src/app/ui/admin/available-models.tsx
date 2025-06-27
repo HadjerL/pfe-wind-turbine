@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { FaRobot, FaSyncAlt, FaTrash, FaChartLine } from 'react-icons/fa';
+import { FaRobot, FaSyncAlt, FaTrash, FaChartLine, FaMagic } from 'react-icons/fa';
 import { GiWindTurbine } from 'react-icons/gi';
 import { toast, ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -50,6 +50,7 @@ export default function ModelInfo({
     active: boolean;
     delete: boolean;
     evaluate: boolean;
+    tune: boolean;
   }>>({});
   
   const { 
@@ -62,15 +63,67 @@ export default function ModelInfo({
     clearForecastEvaluation
   } = useDataStore();
 
-  const setLoadingState = (modelKey: string, action: 'active' | 'delete' | 'evaluate', value: boolean) => {
-    setLoadingStates(prev => ({
-      ...prev,
-      [modelKey]: {
-        ...(prev[modelKey] || { active: false, delete: false, evaluate: false }),
-        [action]: value
-      }
-    }));
-  };
+  const setLoadingState = (modelKey: string, action: 'active' | 'delete' | 'evaluate' | 'tune', value: boolean) => {
+      setLoadingStates(prev => ({
+        ...prev,
+        [modelKey]: {
+          ...(prev[modelKey] || { active: false, delete: false, evaluate: false, tune: false }),
+          [action]: value
+        }
+      }));
+    };
+
+  const tuneModel = async (modelType: string, architecture: string, version: string) => {
+  const modelKey = `${modelType}_${architecture}_${version}`;
+  try {
+    if (!uploadedData || uploadedData.length === 0) {
+      throw new Error("Please upload data first before tuning models");
+    }
+
+    setLoadingState(modelKey, 'tune', true);
+    
+    const endpoint = models_type === 'classification' 
+      ? `/api/tune_classification_model/${modelType}/${architecture}/${version}`
+      : `/api/tune_forecasting_model/${modelType}/${architecture}/${version}`;
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(uploadedData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to tune model');
+    }
+
+    const data = await response.json();
+    
+    if (models_type === 'classification') {
+      setTuningResults({
+        evaluation: {
+          ...data.evaluation
+        },
+        message: data.message,
+      });
+    } else {
+      setForecastEvaluation({
+        forecast_horizon: data.forecast_horizon,
+        message: data.message,
+        results: {
+          ...data.results
+        }
+      });
+    }
+    
+    toast.success(`Model ${architecture} ${version} tuned successfully`);
+    await fetchModels(); // Refresh the model list to show the new tuned version
+  } catch (err) {
+    toast.error(`Failed to tune model: ${err instanceof Error ? err.message : 'Unknown error'}`);
+  } finally {
+    setLoadingState(modelKey, 'tune', false);
+  }
+};
 
   const fetchHyperparameters = useCallback(async (modelType: string, architecture: string) => {
     const key = `${modelType}_${architecture}`;
@@ -521,7 +574,21 @@ export default function ModelInfo({
                                 )}
                               </button>
                               
-                              
+                              <button
+                                onClick={() => tuneModel(archi.model_type, archi.architecture, version.name)}
+                                disabled={currentLoading.tune || isCurrent}
+                                className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded hover:bg-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={isCurrent ? "Cannot tune active model" : "Tune model"}
+                              >
+                                {currentLoading.tune ? (
+                                  <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                  </svg>
+                                ) : (
+                                  <FaMagic className="text-xs" />
+                                )}
+                              </button>
                               
                               {isEvaluated ? (
                                 <button

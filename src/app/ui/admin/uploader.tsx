@@ -61,42 +61,42 @@ export default function Uploader() {
     return true;
   };
 
-  const fetchModelTuning = async (data: DataPoint[]) => {
-    setIsLoading(true);
-    clearTuningResults();
-    console.log(data);
-    try {
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${backendUrl}/tune_models`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
+  // const fetchModelTuning = async (data: DataPoint[]) => {
+  //   setIsLoading(true);
+  //   clearTuningResults();
+  //   console.log(data);
+  //   try {
+  //     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  //     const response = await fetch(`${backendUrl}/tune_models`, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify(data),
+  //     });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to tune and evaluate models: ${errorText}`);
-      }
+  //     if (!response.ok) {
+  //       const errorText = await response.text();
+  //       throw new Error(`Failed to tune and evaluate models: ${errorText}`);
+  //     }
 
-      const tuningResults = await response.json();
-      setTuningResults(tuningResults);
-      console.log('Model Tuning Results:', tuningResults);
-      // Add UI updates to display results if needed
-    } catch (err) {
-      setError(
-        `Error tuning models: ${
-          err instanceof Error ? err.message : 'Unknown error'
-        }`
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     const tuningResults = await response.json();
+  //     setTuningResults(tuningResults);
+  //     console.log('Model Tuning Results:', tuningResults);
+  //     // Add UI updates to display results if needed
+  //   } catch (err) {
+  //     setError(
+  //       `Error tuning models: ${
+  //         err instanceof Error ? err.message : 'Unknown error'
+  //       }`
+  //     );
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  const handleTuneModels = () => {
-    setError(null);
-    fetchModelTuning(uploadedData);
-  };
+  // const handleTuneModels = () => {
+  //   setError(null);
+  //   fetchModelTuning(uploadedData);
+  // };
 
   const handleFileParse = (event: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
@@ -227,13 +227,13 @@ export default function Uploader() {
                         Train New Model
                     </button>
                     
-                    <button
+                    {/* <button
                         onClick={handleTuneModels}
                         className="bg-primary text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
                         disabled={isLoading || uploadedData.length === 0}
                     >
                         Tune Existing Models
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
